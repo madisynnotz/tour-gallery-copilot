@@ -11,9 +11,9 @@ function App() {
   const fetchTours = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://course-api.com/react-tours-project');
+      const response = await fetch('https://cors-anywhere.herokuapp.com/https://course-api.com/react-tours-project');
       if (!response.ok) {
-        throw new Error('Something went wrong while fetching tours');
+        throw new Error('Failed to fetch tours');
       }
       const data = await response.json();
       setTours(data);

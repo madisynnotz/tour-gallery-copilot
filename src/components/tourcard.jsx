@@ -1,5 +1,5 @@
 import React from 'react';
-import './TourCard.css'; // Optional: link to CSS file if you're styling the cards
+
 
 // This component takes in two props:
 // - tour: the data object for a single tour

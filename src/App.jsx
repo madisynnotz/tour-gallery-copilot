@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Gallery from './components/Gallery'; // Import your Gallery component
+import Gallery from './components/Gallery';
 
 function App() {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // Function to fetch tour data from the API
+  // Fetch tour data from the API
   const fetchTours = async () => {
     setLoading(true);
     try {
       const response = await fetch('https://course-api.com/react-tours-project');
       if (!response.ok) {
-        throw new Error('Failed to fetch tours');
+        throw new Error('Something went wrong while fetching tours');
       }
       const data = await response.json();
       setTours(data);
@@ -25,39 +25,46 @@ function App() {
     }
   };
 
-  // Run fetchTours() once when the app first loads
+  // Run once when the app first loads
   useEffect(() => {
     fetchTours();
   }, []);
 
-  // This gets called when a user clicks "Not Interested"
+  // Remove a tour by ID
   const removeTour = (id) => {
-    // Filter out the tour with the matching ID
-    const updatedTours = tours.filter((tour) => tour.id !== id);
-    setTours(updatedTours);
+    const filteredTours = tours.filter((tour) => tour.id !== id);
+    setTours(filteredTours);
   };
 
-  // Loading state
+  // Conditional rendering for different app states
   if (loading) {
-    return <h2>Loading...</h2>;
-  }
-
-  //  Error state
-  if (error) {
-    return <h2>Oops! Something went wrong while fetching tours.</h2>;
-  }
-
-  // 🧹 If all tours are removed, offer a refresh button
-  if (tours.length === 0) {
     return (
       <main>
-        <h2>No tours left</h2>
-        <button className="btn" onClick={fetchTours}>Refresh</button>
+        <h2>Loading...</h2>
       </main>
     );
   }
 
-  // ✅ Normal render — pass tours and removeTour down to Gallery
+  if (error) {
+    return (
+      <main>
+        <h2>Something went wrong. Please try again later.</h2>
+      </main>
+    );
+  }
+
+  if (tours.length === 0) {
+    return (
+      <main>
+        <h2>No tours left</h2>
+        <button className="btn" onClick={fetchTours}>
+          Refresh
+        </button>
+      </main>
+    );
+  }
+
+  // Normal state: show tour gallery
   return (
     <main>
       <h1>Tour Gallery</h1>
@@ -67,5 +74,3 @@ function App() {
 }
 
 export default App;
-
-

@@ -1,5 +1,5 @@
 import React from 'react';
-import TourCard from './TourCard';
+import TourCard from ''./TourCard';
 
 // Gallery receives the list of tours and the remove function from App.jsx
 function Gallery({ tours, onRemove }) {

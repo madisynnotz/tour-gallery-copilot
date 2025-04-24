@@ -1,73 +1,71 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import Gallery from './components/Gallery'; // Import your Gallery component
 
-// Main App component
 function App() {
-  // State to store the tour data we get from the API
   const [tours, setTours] = useState([]);
-
-  // State to track if data is still loading
   const [loading, setLoading] = useState(true);
-
-  // State to track if an error happens during fetch
   const [error, setError] = useState(false);
 
-  // useEffect runs only once (on component mount) to fetch the data
-  useEffect(() => {
-    const fetchTours = async () => {
-      // Start loading
-      setLoading(true);
-      try {
-        // Call the API
-        const response = await fetch('https://course-api.com/react-tours-project');
-        
-        // If response isn’t OK (200), throw an error
-        if (!response.ok) {
-          throw new Error('Something went wrong!');
-        }
-
-        // Convert response to JSON
-        const data = await response.json();
-
-        // Save the tour data to state
-        setTours(data);
-
-        // Turn off loading
-        setLoading(false);
-      } catch (err) {
-        // If an error happens, show error message
-        console.error('Failed to fetch tours:', err);
-        setError(true);
-        setLoading(false);
+  // Function to fetch tour data from the API
+  const fetchTours = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://course-api.com/react-tours-project');
+      if (!response.ok) {
+        throw new Error('Failed to fetch tours');
       }
-    };
+      const data = await response.json();
+      setTours(data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError(true);
+      setLoading(false);
+    }
+  };
 
-    // Call the fetch function
+  // Run fetchTours() once when the app first loads
+  useEffect(() => {
     fetchTours();
-  }, []); // Empty array = only runs on first load
+  }, []);
 
-  // If data is still loading, show loading message
+  // This gets called when a user clicks "Not Interested"
+  const removeTour = (id) => {
+    // Filter out the tour with the matching ID
+    const updatedTours = tours.filter((tour) => tour.id !== id);
+    setTours(updatedTours);
+  };
+
+  // Loading state
   if (loading) {
     return <h2>Loading...</h2>;
   }
 
-  // If an error occurred, show a fallback error message
+  //  Error state
   if (error) {
-    return <h2>Oops! There was a problem loading the tours.</h2>;
+    return <h2>Oops! Something went wrong while fetching tours.</h2>;
   }
 
-  // Once data is loaded, show it (for now we just dump it as raw JSON)
+  // 🧹 If all tours are removed, offer a refresh button
+  if (tours.length === 0) {
+    return (
+      <main>
+        <h2>No tours left</h2>
+        <button className="btn" onClick={fetchTours}>Refresh</button>
+      </main>
+    );
+  }
+
+  // ✅ Normal render — pass tours and removeTour down to Gallery
   return (
     <main>
       <h1>Tour Gallery</h1>
-      <div>
-        {/* Later, this will be replaced with the Gallery component */}
-        {/* <Gallery tours={tours} /> */}
-        <pre>{JSON.stringify(tours, null, 2)}</pre> {/* Temporary debug view */}
-      </div>
+      <Gallery tours={tours} onRemove={removeTour} />
     </main>
   );
 }
 
 export default App;
+
 
